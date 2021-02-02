@@ -3,18 +3,29 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var db= require('./config/connection')
 
 var usersRouter = require('./routes');
 var adminRouter = require('./routes/admin');
 var hbs=require('express-handlebars')
 var app = express();
 
+
+//db connect
+db.connect((err) => {
+  if (err) {
+    console.log("Error in connection");
+  } else {
+    console.log("Database connected successdully");
+  }
+});
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout',partialsDir:__dirname+'/views/partials'}))
-
 
 
 
@@ -27,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', usersRouter);
 app.use('/admin', adminRouter);
 app.use(express.static('public'))
+
 
 
 // catch 404 and forward to error handler
